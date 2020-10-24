@@ -117,6 +117,6 @@ model.compile(
 def save_model():
     models.save_model(model,"defect_detection_model.h5")
 
-model.fit(train_images, train_labels, epochs=10, callbacks=save_model)
+model.fit(train_images, train_labels, epochs=10, callbacks=[save_model])
 
 # %%

@@ -58,10 +58,10 @@ def batch_preparation() :
     cracked_path = "D:\\Python projects\\hackathon dataset\\Decks\\Cracked\\"
     not_cracked_path = "D:\\Python projects\\hackathon dataset\\Decks\\Non-Cracked\\"
 
-    cracked = os.listdir(cracked_path)
-    cracked_len = len(cracked)
+    cracked = os.listdir(cracked_path) 
+    cracked_len = len(cracked) - 1
     not_cracked = os.listdir(not_cracked_path)
-    not_cracked_len = len(not_cracked)
+    not_cracked_len = len(not_cracked) - 1
 
     images_dict = {}
 
@@ -114,8 +114,12 @@ model.compile(
     metrics=["accuracy"]
 )
 
-def save_model():
-    models.save_model(model,"defect_detection_model.h5")
+model_checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
+    filepath="/checkpoints/",
+    save_weights_only=True,
+    monitor='val_accuracy',
+    mode='max',
+    save_best_only=True)
 
 model.fit(train_images, train_labels, epochs=10, callbacks=[save_model])
 

@@ -1,11 +1,11 @@
 #%%
-from tensorflow import keras
 import tensorflow as tf
 import PIL as pil
 from PIL import ImageOps
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from tensorflow.keras import models,layers,Sequential
 import os
 
 # %%
@@ -36,20 +36,42 @@ for i in range(img.shape[0]) :
 
 #%%
 #data preparation loop
-raw_data_path = "D:\\Python projects\\hackathon dataset\\Decks\\c-test";
-processed_data_path = "D:\\Python projects\\hackathon dataset\\Processed\\Cracked"
+raw_data_path = "D:\\Python projects\\hackathon dataset\\Decks\\c-test\\";
+processed_data_path = "D:\\Python projects\\hackathon dataset\\Processed\\Cracked\\"
 
 for file in os.listdir(raw_data_path):
-    pathname = raw_data_path + "\\" + file
+    pathname = raw_data_path + file
     img = img_to_array(pathname, augmented=True)
     for i in range(img.shape[0]) :
         name = file.split(".")[0]
         extension = pathname.split(".")[1]
-        full_path = processed_data_path + name + "-" + str(i) + extension
+        full_path = processed_data_path + name + "-" + str(i) + "." + extension
         plt.imshow(img[i])
+        plt.axis('off')
         plt.savefig(full_path)
+
+#%%
+img = pil.Image.open("7001-2-0.jpg")
+img = np.array(img,np.int32) / 255
+img = tf.image.resize(img,(128,128))
+print(img.shape)
+
 # %%
 #build a model
-model = keras.models.Sequential([
-    
-])
+model = Sequential([
+    layers.Conv2D(64,(3,3),activation="relu",input_shape=(128,128,3)),
+    layers.MaxPooling2D((2,2)),
+    layers.Conv2D(64,(3,3),activation="relu"),
+    layers.MaxPooling2D((2,2)),
+    layers.Conv2D(64,(3,3),activation="relu"),
+    layers.MaxPooling2D((2,2)),
+    layers.Flatten(),
+    layers.Dense(64, activation="relu"),
+    layers.Dense(2, activation="softmax") #binary output
+
+model.compile(
+    optimizer="adam", 
+    loss=tf.losses.SparseCategoricalCrossentropy(from_logits=True),
+    metrics=["accuracy"]
+)
+# %%

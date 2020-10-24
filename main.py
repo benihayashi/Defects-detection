@@ -5,7 +5,7 @@ from PIL import ImageOps
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from tensorflow.keras import models,layers,Sequential, callbacks
+from tensorflow.keras import models,layers,Sequential, callbacks, losses
 import os
 import random
 
@@ -19,17 +19,16 @@ def img_to_array(img_path, augmented=False) :
     img = tf.image.adjust_contrast(img,3)
     #img = tf.image.rgb_to_grayscale(img)
     img = tf.image.resize(img,(width,height))
+    arr = []
+    arr.append(img)
     if(augmented) : 
         #arr = np.empty((0,width,height,1),np.int32)
         #arr = np.append(arr,img)
-        arr = []
-        arr.append(img)
         for i in range(3) :
             img = tf.image.rot90(img)
             arr.append(img)
         #arr = arr.reshape((4,width,height,3))
-        return arr
-    return img
+    return arr
 
 # %%
 img = img_to_array("7004-142.jpg",augmented=True)
@@ -122,19 +121,19 @@ print(train_images.shape)
 #build a model
 model = Sequential([
     layers.Conv2D(64,(3,3),activation="relu",input_shape=(128,128,3)),
-    layers.MaxPooling2D((2,2)),
+    layers.MaxPooling2D((4,4)),
     layers.Conv2D(64,(3,3),activation="relu"),
-    layers.MaxPooling2D((2,2)),
+    layers.MaxPooling2D((4,4)),
     layers.Conv2D(64,(3,3),activation="relu"),
-    layers.MaxPooling2D((2,2)),
+    #layers.MaxPooling2D((2,2)),
     layers.Flatten(),
     layers.Dense(64, activation="relu"),
-    layers.Dense(2) #binary output
+    layers.Dense(2, activation="softmax") #binary output
 ])
 
 model.compile(
     optimizer="adam", 
-    loss=tf.losses.SparseCategoricalCrossentropy(from_logits=True),
+    loss=losses.BinaryCrossentropy()
     metrics=["accuracy"]
 )
 
@@ -147,5 +146,20 @@ model_checkpoint_callback = callbacks.ModelCheckpoint(
 )
 
 model.fit(train_images, train_labels, epochs=1, callbacks=[model_checkpoint_callback])
+
+# %%
+label_names = ["Non-cracked","Cracked"]
+def predict_custom_img(img_path : str) : #use to predict custom images
+    img = img_to_array(img_path)
+    img = np.array(img).reshape((1,128,128,3))
+    model = models.load_model("modelv3.h5")
+    prediction = model.predict(img)
+    print(prediction)
+    prediction_index = np.argmax(prediction[0])
+    print("Prediction : {}".format(label_names[prediction_index]))
+    plt.imshow(img[0])
+    plt.show()
+
+predict_custom_img("7001-66.jpg")
 
 # %%

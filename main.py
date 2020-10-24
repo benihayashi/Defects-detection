@@ -106,7 +106,7 @@ model = Sequential([
     layers.MaxPooling2D((2,2)),
     layers.Flatten(),
     layers.Dense(64, activation="relu"),
-    layers.Dense(1) #binary output
+    layers.Dense(2) #binary output
 
 model.compile(
     optimizer="adam", 

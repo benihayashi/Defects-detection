@@ -89,10 +89,31 @@ imgs = batch_preparation()
 cols = ["isCracked"]
 train_data = pd.DataFrame.from_dict(imgs,orient='index', columns=cols)
 
-print(train_data)
+#shuffle the data
+#n = num of row we want, replace = false, we dont want same data in next sample
+sampled = train_data.sample(n=400,random_state = 1,replace = False)
+#print(train_data)
+
+derefered_images = []
+#split the data into images and labels
+train_images = np.array(sampled.index.values.tolist()) #<- list of list
+
+for tensor in train_images:
+    derefered_images.append(np.array(tensor.deref()))
+print("done")
+
+#print(np.asarray(derefered_images).shape)
+train_images = np.array(derefered_images)
+print(train_images.shape)
+train_labels = np.array(sampled['isCracked'].tolist())
+print(train_labels)
+print(train_labels.shape)
+
+#train_labels = train_labels.tolist()
 #shuffle the data
 #split the data into images and labels
 #feed the data 
+#%%
     
 
 # %%
@@ -120,8 +141,9 @@ model_checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
     save_weights_only=True,
     monitor='val_accuracy',
     mode='max',
-    save_best_only=True)
+    save_best_only=True
+)
 
-model.fit(train_images, train_labels, epochs=10, callbacks=[model_checkpoint_callback])
+model.fit(train_images, train_labels, epochs=1, callbacks=[model_checkpoint_callback])
 
 # %%

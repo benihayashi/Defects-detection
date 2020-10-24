@@ -36,7 +36,7 @@ for i in range(img.shape[0]) :
 
 #%%
 #data preparation loop
-raw_data_path = "D:\\Python projects\\hackathon dataset\\Decks\\c-test\\";
+raw_data_path = "D:\\Python projects\\hackathon dataset\\Decks\\Cracked\\";
 processed_data_path = "D:\\Python projects\\hackathon dataset\\Processed\\Cracked\\"
 
 for file in os.listdir(raw_data_path):
@@ -74,4 +74,5 @@ model.compile(
     loss=tf.losses.SparseCategoricalCrossentropy(from_logits=True),
     metrics=["accuracy"]
 )
+
 # %%

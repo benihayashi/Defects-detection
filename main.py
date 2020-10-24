@@ -65,8 +65,8 @@ def batch_preparation() :
 
     images_dict = {}
 
-    cracked_num = random.randint(0,1000)
-    not_cracked_num = 1000 - cracked_num
+    cracked_num = random.randint(0,100)
+    not_cracked_num = 100 - cracked_num
 
     #load in the files in cracked deck file
     for i in range(cracked_num) :
@@ -107,6 +107,7 @@ model = Sequential([
     layers.Flatten(),
     layers.Dense(64, activation="relu"),
     layers.Dense(2) #binary output
+])
 
 model.compile(
     optimizer="adam", 
@@ -121,6 +122,6 @@ model_checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
     mode='max',
     save_best_only=True)
 
-model.fit(train_images, train_labels, epochs=10, callbacks=[save_model])
+model.fit(train_images, train_labels, epochs=10, callbacks=[model_checkpoint_callback])
 
 # %%

@@ -1,3 +1,4 @@
+#%%
 import tensorflow as tf
 import PIL as pil
 from PIL import ImageOps
@@ -31,10 +32,10 @@ def img_to_array(img_path, augmented=False) :
     return img
 
 # %%
-# img = img_to_array("7004-142.jpg",augmented=True)
-# for i in range(img.shape[0]) :
-#     plt.imshow(img[i])
-#     plt.show()
+img = img_to_array("7004-142.jpg",augmented=True)
+for i in range(img.shape[0]) :
+    plt.imshow(img[i])
+    plt.show()
 
 #%%
 #data preparation loop
@@ -52,16 +53,20 @@ def img_to_array(img_path, augmented=False) :
 #         plt.axis('off')
 #         plt.savefig(full_path)
 
-
+#%%
 def batch_preparation() :
-    cracked_path = "../../Decks/Cracked/"
-    not_cracked_path = "../../Decks/Non-Cracked/"
+    cracked_path = "D:\\Python projects\\hackathon dataset\\Decks\\Cracked\\"
+    not_cracked_path = "D:\\Python projects\\hackathon dataset\\Decks\\Non-Cracked\\"
 
+    cracked = os.listdir(cracked_path) 
+    cracked_len = len(cracked) - 1
     not_cracked = os.listdir(not_cracked_path)
     not_cracked_len = len(not_cracked) - 1
 
     images_dict = {}
 
+    cracked_num = random.randint(0,100)
+    not_cracked_num = 100 - cracked_num
 
     #load in the files in cracked deck file
     for i in range(cracked_num) :
@@ -82,12 +87,7 @@ def batch_preparation() :
 imgs = batch_preparation()
 
 cols = ["isCracked"]
-train_data = pd.DataFrame.from_dict(imgs,orient='index', columns=cols) #<- this is a DataFrame
-
-'''shuffle the data'''
-#n = num of row we want, replace = false, we dont want same data in next sample
-sampled = train_data.sample(n=4000,random_state = 1,replace = False)
-#print(train_data)
+train_data = pd.DataFrame.from_dict(imgs,orient='index', columns=cols)
 
 #shuffle the data
 #n = num of row we want, replace = false, we dont want same data in next sample
@@ -112,18 +112,11 @@ print(train_labels.shape)
 #train_labels = train_labels.tolist()
 #shuffle the data
 #split the data into images and labels
-train_images = np.array(sampled.index.values.tolist()) #<- list of list
-for tensor in train_images:
-    derefered_images.append(tensor.deref())
-train_labels = np.asarray(sampled['isCracked'].tolist())
-print(np.array(derefered_images).shape)
-print(train_labels.shape)
-#train_labels = train_labels.tolist()
-
-
 #feed the data 
 #%%
-    
+print(train_labels)
+print(train_labels.shape)
+print(train_images.shape)
 
 # %%
 #build a model
@@ -153,6 +146,6 @@ model_checkpoint_callback = callbacks.ModelCheckpoint(
     save_best_only=True
 )
 
-model.fit(train_images, train_labels, epochs=2, callbacks=[model_checkpoint_callback])
+model.fit(train_images, train_labels, epochs=1, callbacks=[model_checkpoint_callback])
 
 # %%

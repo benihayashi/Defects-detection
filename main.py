@@ -58,15 +58,11 @@ def batch_preparation() :
     cracked_path = "../../Decks/Cracked/"
     not_cracked_path = "../../Decks/Non-Cracked/"
 
-    cracked = os.listdir(cracked_path)
-    cracked_len = len(cracked) - 1 
     not_cracked = os.listdir(not_cracked_path)
-    not_cracked_len = len(not_cracked) - 1 
+    not_cracked_len = len(not_cracked) - 1
 
     images_dict = {}
 
-    cracked_num = random.randint(0,1000)
-    not_cracked_num = 1000 - cracked_num
 
     #load in the files in cracked deck file
     for i in range(cracked_num) :
@@ -119,7 +115,8 @@ model = Sequential([
     layers.MaxPooling2D((2,2)),
     layers.Flatten(),
     layers.Dense(64, activation="relu"),
-    layers.Dense(2, activation="softmax")]) #binary output
+    layers.Dense(2) #binary output
+])
 
 model.compile(
     optimizer="adam", 
@@ -127,9 +124,13 @@ model.compile(
     metrics=["accuracy"]
 )
 
-def save_model():
-    models.save_model(model,"defect_detection_model.h5")
+model_checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
+    filepath="/checkpoints/",
+    save_weights_only=True,
+    monitor='val_accuracy',
+    mode='max',
+    save_best_only=True)
 
-model.fit(train_images, train_labels, epochs=10, callbacks=[save_model])
+model.fit(train_images, train_labels, epochs=10, callbacks=[model_checkpoint_callback])
 
 # %%

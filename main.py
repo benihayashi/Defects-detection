@@ -5,7 +5,7 @@ from PIL import ImageOps
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from tensorflow.keras import models,layers,Sequential
+from tensorflow.keras import models,layers,Sequential, callbacks
 import os
 import random
 
@@ -136,14 +136,14 @@ model.compile(
     metrics=["accuracy"]
 )
 
-model_checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
-    filepath="/checkpoints/",
-    save_weights_only=True,
+model_checkpoint_callback = callbacks.ModelCheckpoint(
+    filepath="./checkpoints/model.h5",
+    save_weights_only=False,
     monitor='val_accuracy',
     mode='max',
     save_best_only=True
 )
 
-model.fit(train_images, train_labels, epochs=1, callbacks=[model_checkpoint_callback])
+model.fit(train_images, train_labels, epochs=2, callbacks=[model_checkpoint_callback])
 
 # %%

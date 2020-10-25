@@ -1,0 +1,23 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Defect Detection</title>
+</head>
+<body>
+    <h1>Defect (Crack) Detection</h1>
+    
+    <form action="" method="get" enctype="multipart/form-data">{% csrf_token %}
+        <input type="file" name="image" id="image">
+        <input type="submit" value="Upload">
+    </form>
+
+    {% if res %}
+    <div name="result" id="result" >
+        <p>{{res}}</p>
+    </div>
+    {% endif %}
+</body>
+</html>

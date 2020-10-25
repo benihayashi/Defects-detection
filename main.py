@@ -105,7 +105,6 @@ for tensor in train_images:
 
 #print(np.asarray(derefered_images).shape)
 train_images = np.array(derefered_images)
-
 train_labels = np.array(sampled['isCracked'].tolist())
 
 #train_labels = train_labels.tolist()
@@ -123,56 +122,9 @@ model = Sequential([
     layers.MaxPooling2D((2,2)),
     layers.Conv2D(256,(5,5),activation="relu"),
     layers.Flatten(),
-    layers.Dense(32, activation="relu"),
-    layers.Dense(1, activation="sigmoid") #binary output
 ])
 
 
-# model.compile(
-#     optimizer="adam", 
-#     #loss=tf.losses.SparseCategoricalCrossentropy(from_logits=True),
-#     #loss='binary_crossentropy',
-#     loss=losses.BinaryCrossentropy(),
-#     metrics=["accuracy"]
-# )
-#model = models.load_model("aumented.h5")
-
-# #print(model.summary())
-
-# model_checkpoint_callback = callbacks.ModelCheckpoint(
-#     filepath="./checkpoints/modeld.h5",
-#     save_weights_only=True,
-#     monitor='val_accuracy',
-#     mode='max',
-#     save_best_only=False
-# )
-
-# train_history = model.fit(train_images, train_labels, epochs=30, callbacks=[model_checkpoint_callback],batch_size = 250)
-# #loss = train_history.history['loss']
-# model.save("modeld.h5")
-# plt.title("Loss")
-# plt.plot(train_history.history['loss'], label = 'train')
-# plt.plot(train_history.history['val_loss'], label = 'test')
-# plt.legend()
-# plt.show()
-
-
-# label_names = ["Non-cracked","Cracked"]
-# def predict_custom_img(img_path : str) : #use to predict custom images
-#     img = img_to_array(img_path)
-#     img = np.array(img).reshape((1,128,128,3))
-#     model.load_weights("modeld.h5")
-#     #print(model.summary())
-#     model.save("finalModel.h5")
-#     prediction = model.predict(img)
-#     print(prediction)
-#     # prediction_index = np.argmax(prediction[0])
-#     # print("Prediction : {}".format(label_names[prediction_index]))
-#     plt.imshow(img[0])
-#     plt.show()
-
-#predict_custom_img("../../Decks/Non-Cracked/7001-33.jpg")
-#predict_custom_img("../../Decks/Cracked/7001-97.jpg")
 # %%
 def testingAccuracy():
     crackedAccuList = []

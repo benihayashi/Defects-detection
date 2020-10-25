@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     #my apps
-    'hakkaman',
+    'hakkaman.apps.HakkamanConfig',
 ]
 
 MIDDLEWARE = [

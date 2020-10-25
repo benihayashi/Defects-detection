@@ -28,7 +28,7 @@ SECRET_KEY = 'i@e1_##0$4bdo5!u8==j#p2)1zia%$c%%lvv4y!*9a+l5m4y7#'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['hakkaman-defect-detection.herokuapp.com','127.0.0.1']
 
 
 # Application definition

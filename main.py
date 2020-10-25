@@ -149,6 +149,7 @@ model.fit(train_images, train_labels, epochs=1, callbacks=[model_checkpoint_call
 
 # %%
 label_names = ["Non-cracked","Cracked"]
+
 def predict_custom_img(img_path : str) : #use to predict custom images
     img = img_to_array(img_path)
     img = np.array(img).reshape((1,128,128,3))

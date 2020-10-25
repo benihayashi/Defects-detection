@@ -12,7 +12,9 @@ colorama==0.4.3
 cycler==0.10.0
 decorator==4.4.2
 distlib==0.3.1
+dj-database-url==0.5.0
 Django==3.1.1
+django-heroku==0.3.1
 dm-tree==0.1.5
 filelock==3.0.12
 gast==0.3.3
@@ -20,6 +22,7 @@ google-auth==1.21.2
 google-auth-oauthlib==0.4.1
 google-pasta==0.2.0
 grpcio==1.32.0
+gunicorn==20.0.4
 h5py==2.10.0
 idna==2.10
 importlib-metadata==1.7.0
@@ -48,12 +51,14 @@ pickleshare==0.7.5
 Pillow==8.0.1
 prompt-toolkit==3.0.7
 protobuf==3.13.0
+psycopg2==2.8.6
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
 Pygments==2.7.1
 pylint==2.6.0
 pyparsing==2.4.7
 python-dateutil==2.8.1
+python-decouple==3.3
 pytz==2020.1
 pyzmq==19.0.2
 requests==2.24.0
@@ -79,5 +84,6 @@ urllib3==1.25.10
 virtualenv==20.0.31
 wcwidth==0.2.5
 Werkzeug==1.0.1
+whitenoise==5.2.0
 wrapt==1.12.1
 zipp==3.1.0

@@ -7,8 +7,8 @@ def home_view(request):
     if(request.method == "POST" and request.FILES["image"].name != "") :
         image = request.FILES["image"]
         extension = image.name.split(".")[1]
-        if(extension != "png" and extension != "jpg" and extension != "jpeg") :
-            context["res"] = "Invalid File Type!"
+        if(extension != "jpg" and extension != "jpeg") :
+            context["res"] = "Invalid File Type! Only jpg Files are accepted"
         else :
             fs = FileSystemStorage() 
             name = image.name.split(".")[0] + "." + "jpg"

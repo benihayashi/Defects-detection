@@ -1,0 +1,1 @@
+web: gunicorn defects-detection.demo.wsgi --log-file -

@@ -11,8 +11,9 @@ def home_view(request):
             context["res"] = "Invalid File Type!"
         else :
             fs = FileSystemStorage() 
-            file = fs.save(image.name, image)
-            prediction = predict_custom_img("./media/" + image.name)
+            name = image.name.split(".")[0] + "." + "jpg"
+            file = fs.save(name, image)
+            prediction = predict_custom_img("./media/" + name)
             context["res"] = str(prediction)
 
     return render(request,"home.html",context)

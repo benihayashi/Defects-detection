@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.core.files.storage import FileSystemStorage
 from .ml_model import predict_custom_img
+import os
 # Create your views here.
 def home_view(request):
     context = {}
@@ -14,6 +15,7 @@ def home_view(request):
             name = image.name.split(".")[0] + "." + "jpg"
             file = fs.save(name, image)
             prediction = predict_custom_img("./media/" + name)
+            os.remove("./media/" + name)
             context["res"] = str(prediction)
 
     return render(request,"home.html",context)

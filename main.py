@@ -24,17 +24,20 @@ def img_to_array(img_path, augmented=False) :
     if(augmented) : 
         #arr = np.empty((0,width,height,1),np.int32)
         #arr = np.append(arr,img)
+        #arr = []
+        arr.append(img)
         for i in range(3) :
             img = tf.image.rot90(img)
             arr.append(img)
         #arr = arr.reshape((4,width,height,3))
     return arr
+    #return img
 
 # %%
-img = img_to_array("7004-142.jpg",augmented=True)
-for i in range(img.shape[0]) :
-    plt.imshow(img[i])
-    plt.show()
+# img = img_to_array("7004-142.jpg",augmented=True)
+# for i in range(img.shape[0]) :
+#     plt.imshow(img[i])
+#     plt.show()
 
 #%%
 #data preparation loop
@@ -54,8 +57,8 @@ for i in range(img.shape[0]) :
 
 #%%
 def batch_preparation() :
-    cracked_path = "D:\\Python projects\\hackathon dataset\\Decks\\Cracked\\"
-    not_cracked_path = "D:\\Python projects\\hackathon dataset\\Decks\\Non-Cracked\\"
+    cracked_path = "../../Decks/Cracked/"
+    not_cracked_path = "../../Decks/Non-Cracked/"
 
     cracked = os.listdir(cracked_path) 
     cracked_len = len(cracked) - 1
@@ -64,19 +67,19 @@ def batch_preparation() :
 
     images_dict = {}
 
-    cracked_num = random.randint(0,100)
-    not_cracked_num = 100 - cracked_num
+    cracked_num = random.randint(0,2000)
+    not_cracked_num = 2000 - cracked_num
 
     #load in the files in cracked deck file
     for i in range(cracked_num) :
         file = cracked[random.randint(0,cracked_len)];
-        img = img_to_array(cracked_path + file, augmented=True)
+        img = img_to_array(cracked_path + file, augmented=False)
         for i in img:
             images_dict.update({i.ref():1})
 
     for i in range(not_cracked_num) :
         file = not_cracked[random.randint(0,not_cracked_len)];
-        img = img_to_array(not_cracked_path + file, augmented=True)
+        img = img_to_array(not_cracked_path + file, augmented=False)
         for i in img:
             images_dict.update({i.ref():0})
     
@@ -90,7 +93,7 @@ train_data = pd.DataFrame.from_dict(imgs,orient='index', columns=cols)
 
 #shuffle the data
 #n = num of row we want, replace = false, we dont want same data in next sample
-sampled = train_data.sample(n=400,random_state = 1,replace = False)
+sampled = train_data.sample(n=2000,random_state = 1,replace = False)
 #print(train_data)
 
 derefered_images = []
@@ -99,68 +102,53 @@ train_images = np.array(sampled.index.values.tolist()) #<- list of list
 
 for tensor in train_images:
     derefered_images.append(np.array(tensor.deref()))
-print("done")
 
 #print(np.asarray(derefered_images).shape)
 train_images = np.array(derefered_images)
-print(train_images.shape)
 train_labels = np.array(sampled['isCracked'].tolist())
-print(train_labels)
-print(train_labels.shape)
 
 #train_labels = train_labels.tolist()
 #shuffle the data
 #split the data into images and labels
 #feed the data 
 #%%
-print(train_labels)
-print(train_labels.shape)
-print(train_images.shape)
 
 # %%
 #build a model
 model = Sequential([
-    layers.Conv2D(64,(3,3),activation="relu",input_shape=(128,128,3)),
-    layers.MaxPooling2D((4,4)),
-    layers.Conv2D(64,(3,3),activation="relu"),
-    layers.MaxPooling2D((4,4)),
-    layers.Conv2D(64,(3,3),activation="relu"),
-    #layers.MaxPooling2D((2,2)),
+    layers.Conv2D(128,(3,3),activation="relu",input_shape=(128,128,3)),
+    layers.MaxPooling2D((2,2)),
+    layers.Conv2D(256,(5,5),activation="relu"),
+    layers.MaxPooling2D((2,2)),
+    layers.Conv2D(256,(5,5),activation="relu"),
     layers.Flatten(),
-    layers.Dense(64, activation="relu"),
-    layers.Dense(2, activation="softmax") #binary output
 ])
 
-model.compile(
-    optimizer="adam", 
-    loss=losses.BinaryCrossentropy()
-    metrics=["accuracy"]
-)
-
-model_checkpoint_callback = callbacks.ModelCheckpoint(
-    filepath="./checkpoints/model.h5",
-    save_weights_only=False,
-    monitor='val_accuracy',
-    mode='max',
-    save_best_only=True
-)
-
-model.fit(train_images, train_labels, epochs=1, callbacks=[model_checkpoint_callback])
 
 # %%
-label_names = ["Non-cracked","Cracked"]
+def testingAccuracy():
+    crackedAccuList = []
+    notCrackedAccuList = []
+    cracked_path = "../../Decks/Cracked/"
+    not_cracked_path = "../../Decks/Non-Cracked/"
+    cracked = os.listdir(cracked_path) 
+    not_cracked = os.listdir(not_cracked_path)
+    model = models.load_model("finalModel.h5")
+    for i in range(0,len(cracked),20):
+        testImage = img_to_array(cracked_path + cracked[i])
+        testImage = np.array(testImage).reshape(1,128,128,3)
+        prediction = model.predict(testImage)
+        crackedAccuList.append(prediction[0][0])
+        print("Cracked Prediction {}, accuracy: {}".format(i,prediction[0]))
+    for i in range(0,len(not_cracked),150):
+        testImage = img_to_array(not_cracked_path + not_cracked[i])
+        testImage = np.array(testImage).reshape(1,128,128,3)
+        prediction = model.predict(testImage)
+        notCrackedAccuList.append(prediction[0][0])
+        print("Not Cracked Prediction {}, accuracy: {}".format(i,prediction[0]))
+    crackedAccu = np.array(crackedAccuList).mean()
+    notCrackedAccu = np.array(notCrackedAccuList).mean()
+    print("Average prediction for cracked: {}".format(crackedAccu))
+    print("Average prediction for non-cracked: {}".format(notCrackedAccu))
 
-def predict_custom_img(img_path : str) : #use to predict custom images
-    img = img_to_array(img_path)
-    img = np.array(img).reshape((1,128,128,3))
-    model = models.load_model("modelv3.h5")
-    prediction = model.predict(img)
-    print(prediction)
-    prediction_index = np.argmax(prediction[0])
-    print("Prediction : {}".format(label_names[prediction_index]))
-    plt.imshow(img[0])
-    plt.show()
-
-predict_custom_img("7001-66.jpg")
-
-# %%
+testingAccuracy()

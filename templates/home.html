@@ -8,27 +8,20 @@
 </head>
 <body>
     <h1>Defect (Crack) Detection</h1>
-    
-    <form action="" method="POST" enctype="multipart/form-data">{% csrf_token %}
+
+    {% csrf_token %}
+    <form>
         <input type="file" name="image" id="image" onchange="show_preview(this)">
         <div id="preview"></div>
-        <input type="submit" value="Upload" onclick="show_processing()">
+        <input type="button" value="Upload" onclick="upload_image()">
     </form>
 
-    {% if res %}
-    <div name="result" id="result" style="margin-top: 30px; font-size:20px">
-        {{res}}
-    </div>
-    {% else %}
     <div id="processing" style="margin-top: 30px; font-size:20px"></div>
-    {% endif %}
 </body>
 </html>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
-show_processing = () => document.getElementById("processing").innerHTML = "Processing...";
-
 show_preview = (input) =>{
   if (input.files && input.files[0]) {
     var reader = new FileReader();
@@ -38,6 +31,7 @@ show_preview = (input) =>{
         img.width = 250;
         img.height = 250;
         img.src =  e.target.result;
+        document.getElementById("preview").innerHTML = "";
         document.getElementById("preview").appendChild(img);
     }
     
@@ -46,7 +40,26 @@ show_preview = (input) =>{
 }
 
 upload_image = () =>{
-    
+    document.getElementById("processing").innerHTML = "Processing...";
+    //get csrf token
+    csrftoken = document.getElementsByName("csrfmiddlewaretoken")[0].value;
+    formdata = new FormData();
+    image = document.getElementById("image").files[0]
+    formdata.append("image",image);
+    formdata.append("csrfmiddlewaretoken",csrftoken);
+    $.ajax({
+        url : "/",
+        type : "POST",
+        data : formdata,
+        success : (data)=>{
+            document.getElementById("processing").innerHTML = data.res;
+        },
+        error : (error)=>{
+            document.getElementById("processing").innerHTML = "Server Error!";
+        },
+        processData: false,
+        contentType: false
+    })
 }
 
 </script>

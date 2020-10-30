@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.core.files.storage import FileSystemStorage
+from django.http import HttpResponse,JsonResponse
 from .ml_model import predict_custom_img
 import os
 # Create your views here.
@@ -15,7 +16,9 @@ def home_view(request):
             name = image.name.split(".")[0] + "." + "jpg"
             file = fs.save(name, image)
             prediction = predict_custom_img("./media/" + name)
+            res = str(prediction)
             os.remove("./media/" + name)
-            context["res"] = str(prediction)
+            context["res"] = res
+        return JsonResponse(context, status=200)
 
     return render(request,"home.html",context)

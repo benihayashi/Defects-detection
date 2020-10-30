@@ -26,7 +26,7 @@ def img_to_array(img_path, augmented=False) :
 def predict_custom_img(img_path : str) : #use to predict custom images
     img = img_to_array(img_path)
     img = np.array(img).reshape((1,128,128,3))
-    model = models.load_model("./finalModel.h5")
+    model = models.load_model("./finalModel.h5",compile=False)
     prediction = model.predict(img)[0][0]
     type = ""
     if(prediction >= 0.7) : type = "This image contains cracks"
